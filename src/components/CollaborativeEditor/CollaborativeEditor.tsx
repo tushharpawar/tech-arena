@@ -10,12 +10,15 @@ import { editor } from "monaco-editor";
 import { MonacoBinding } from "y-monaco";
 import { Awareness } from "y-protocols/awareness";
 
-// Collaborative code editor with undo/redo, live cursors, and live avatars
-export function CollaborativeEditor({ language }: { language: string }) {
+export function CollaborativeEditor({ language, codeSnippet }: { language: string; codeSnippet: string }) {
   const room = useRoom();
-  const [editorRef, setEditorRef] = useState<editor.IStandaloneCodeEditor>();
+  const [editorRef, setEditorRef] = useState<editor.IStandaloneCodeEditor | null>(null);
+  const [value, setValue] = useState(codeSnippet);
 
-  // Set up Liveblocks Yjs provider and attach Monaco editor
+  useEffect(() => {
+    setValue(codeSnippet);
+  }, [codeSnippet]);
+
   useEffect(() => {
     let yProvider: LiveblocksYjsProvider;
     let yDoc: Y.Doc;
@@ -26,7 +29,6 @@ export function CollaborativeEditor({ language }: { language: string }) {
       const yText = yDoc.getText("monaco");
       yProvider = new LiveblocksYjsProvider(room, yDoc);
 
-
       // Attach Yjs to Monaco
       binding = new MonacoBinding(
         yText,
@@ -35,24 +37,21 @@ export function CollaborativeEditor({ language }: { language: string }) {
         yProvider.awareness as unknown as Awareness
       );
     }
-    
-    
-    return () => {
-        yDoc?.destroy();
-        yProvider?.destroy();
-        binding?.destroy();
-    };
-}, [editorRef, room,language]);
 
-console.log("Lang",language);
-  const handleOnMount = useCallback((e: editor.IStandaloneCodeEditor) => {
-    setEditorRef(e);
+    return () => {
+      yDoc?.destroy();
+      yProvider?.destroy();
+      binding?.destroy();
+    };
+  }, [editorRef, room]);
+
+  const handleOnMount = useCallback((editorInstance: editor.IStandaloneCodeEditor) => {
+    setEditorRef(editorInstance);
   }, []);
 
   return (
     <div className={styles.container}>
-      <div className={styles.editorHeader}>
-      </div>
+      <div className={styles.editorHeader}></div>
       <div className={styles.editorContainer}>
         <Editor
           onMount={handleOnMount}
@@ -61,6 +60,8 @@ console.log("Lang",language);
           theme="vs-dark"
           language={language}
           defaultValue=""
+          value={value}
+          onChange={(newValue) => setValue(newValue || "")}
           options={{
             tabSize: 2,
             padding: { top: 20 },
