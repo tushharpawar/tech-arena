@@ -6,23 +6,25 @@ import {
   RoomProvider,
   ClientSideSuspense,
 } from "@liveblocks/react/suspense";
-import { LanguageSelector } from "./LanguageSelector";
+import { Language, LanguageSelector} from "./LanguageSelector";
 import {  useState } from "react";
 
 export default function LiveBlockEditor() {
 
-    const [language,setLanguage] = useState('javascript')
+    const [language,setLanguage] = useState<Language|null>()
 
-    const onSelect = (language: string) => {
+    const onSelect = (language: Language) => { 
+        setLanguage(null)     
         setLanguage(language)
     }
 
-    console.log("language",language);
+    console.log(language?.snippet);
+    
     
   return (
     <div className="w-screen h-screen overflow-hidden">
         <div className="p-3">
-        <LanguageSelector language={language} onSelect={onSelect}/>
+        <LanguageSelector language={language?.name || "typescript v(5.1.6)"} onSelect={onSelect}/>
         </div>
       <div className="p-3 h-[90%]">
         <LiveblocksProvider
@@ -32,7 +34,7 @@ export default function LiveBlockEditor() {
         >
           <RoomProvider id="my-room">
             <ClientSideSuspense fallback={<div>Loading…</div>}>
-              <CollaborativeEditor language={language}/>
+              <CollaborativeEditor language={language?.name || "defaultLanguage"} codeSnippet={language?.snippet || ""}/>
             </ClientSideSuspense>
           </RoomProvider>
         </LiveblocksProvider>
