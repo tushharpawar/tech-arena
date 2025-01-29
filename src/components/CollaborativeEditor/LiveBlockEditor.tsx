@@ -8,25 +8,28 @@ import {
 } from "@liveblocks/react/suspense";
 import { Language, LanguageSelector} from "./LanguageSelector";
 import {  useState } from "react";
+import OutputTerminal from "../Terminal/OutputTerminal";
 
 export default function LiveBlockEditor() {
 
     const [language,setLanguage] = useState<Language|null>()
+    const [value,setValue] = useState<string>("")
 
-    const onSelect = (language: Language) => { 
-        setLanguage(null)     
+    const onSelect = (language: Language) => {     
         setLanguage(language)
     }
 
-    console.log(language?.snippet);
-    
-    
+    const onChange = (value: string) =>{
+        setValue(value)
+    }
+
+
   return (
     <div className="w-screen h-screen overflow-hidden">
-        <div className="p-3">
+        <div className="p-3 flex gap-2">
         <LanguageSelector language={language?.name || "typescript v(5.1.6)"} onSelect={onSelect}/>
         </div>
-      <div className="p-3 h-[90%]">
+      <div className="p-3 h-[60%] my-2">
         <LiveblocksProvider
           publicApiKey={
             "pk_dev_VHduZugfYhmzP1wEMuG6zDgK7T4uZD3zZAdlt24h011ke7tUcemhc3cEpcq8uJS_"
@@ -34,10 +37,11 @@ export default function LiveBlockEditor() {
         >
           <RoomProvider id="my-room">
             <ClientSideSuspense fallback={<div>Loading…</div>}>
-              <CollaborativeEditor language={language?.name || "defaultLanguage"} codeSnippet={language?.snippet || ""}/>
+              <CollaborativeEditor language={language?.name || "Select Language"} codeSnippet={language?.snippet || ""} onChange={onChange}/>
             </ClientSideSuspense>
           </RoomProvider>
         </LiveblocksProvider>
+        <OutputTerminal code={value} language={language?.name || ""} version={language?.version || ""}/>
       </div>
     </div>
   );
