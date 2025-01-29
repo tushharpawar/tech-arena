@@ -10,13 +10,29 @@ import { editor } from "monaco-editor";
 import { MonacoBinding } from "y-monaco";
 import { Awareness } from "y-protocols/awareness";
 
-export function CollaborativeEditor({ language, codeSnippet }: { language: string; codeSnippet: string }) {
+
+type CollaborativeEditorProps = {
+
+  language: string;
+
+  codeSnippet: string;
+
+  onChange: (value: string) => void;
+
+};
+
+
+export function CollaborativeEditor({language,codeSnippet,onChange}:CollaborativeEditorProps) {
   const room = useRoom();
   const [editorRef, setEditorRef] = useState<editor.IStandaloneCodeEditor | null>(null);
   const [value, setValue] = useState(codeSnippet);
 
   useEffect(() => {
+    if(!language){
+      return
+    }
     setValue(codeSnippet);
+    onChange(codeSnippet)
   }, [codeSnippet]);
 
   useEffect(() => {
@@ -49,6 +65,11 @@ export function CollaborativeEditor({ language, codeSnippet }: { language: strin
     setEditorRef(editorInstance);
   }, []);
 
+  const onHandleChange = (newValue: string | undefined) => {
+       setValue(newValue || "")
+       onChange(newValue || "")
+    }
+
   return (
     <div className={styles.container}>
       <div className={styles.editorHeader}></div>
@@ -61,7 +82,7 @@ export function CollaborativeEditor({ language, codeSnippet }: { language: strin
           language={language}
           defaultValue=""
           value={value}
-          onChange={(newValue) => setValue(newValue || "")}
+          onChange={(newValue)=>onHandleChange(newValue)}
           options={{
             tabSize: 2,
             padding: { top: 20 },
