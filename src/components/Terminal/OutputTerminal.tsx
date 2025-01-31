@@ -32,12 +32,12 @@ const OutputTerminal = ({code,language,version}:OutputTerminalProps) => {
     }
 
   return (
-    <div className='w-full h-[40%] relative bg-black rounded-md  my-2 overflow-y-scroll'>
-        <Button size='sm' className='absolute right-0 m-2' onClick={runCode}>Run code</Button>
+    <div className='w-full h-[40%] bg-black rounded-md  my-2 overflow-y-scroll'>
+        <Button size='sm' className='m-2' onClick={runCode}>Run code</Button>
         <div className="m-2">
-        <p className={data?.code === 1 ? 'text-red-600': ''}>
-            {data?.output}
-        </p>
+            <p className={data?.code === 1 ? 'text-red-500': ''}>
+                {data?.output}
+            </p>
         </div>
     </div>
   )
