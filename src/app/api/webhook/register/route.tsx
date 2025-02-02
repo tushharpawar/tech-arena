@@ -2,6 +2,8 @@ import { headers } from 'next/headers'
 import {Webhook} from 'svix'
 import { WebhookEvent } from '@clerk/nextjs/server'
 import prisma from '@/lib/prisma'
+import { StreamChat } from "stream-chat";
+const client = StreamChat.getInstance(process.env.NEXT_PUBLIC_STREAM_API_KEY!, process.env.STREAM_API_SECRET);
 
 export async function POST(req:Request) {
         const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
@@ -20,7 +22,7 @@ export async function POST(req:Request) {
             return new Response("Error - No Svix headers")
         }
 
-        const payload = req.json()
+        const payload =await req.json()
         const body =JSON.stringify(payload)
 
         const wh = new Webhook(WEBHOOK_SECRET)
@@ -52,7 +54,7 @@ export async function POST(req:Request) {
                     return new Response("No primary email address found!",{status:400})
                 }
 
-                const newUser=await prisma.user.create({
+                await prisma.user.create({
                     data:{
                         id:evt.data.id,
                         name:first_name!,
@@ -60,9 +62,21 @@ export async function POST(req:Request) {
                         profilePicture:image_url,
                     }
                 })
-                console.log("USer created",newUser);
+                const stream_id = primaryEmail.email_address.split('@')[0]
+                const existingUsers = await client.queryUsers({ id: stream_id });
+                if (existingUsers.users.length > 0) {
+                    console.log("User already exists in Stream Chat:");
+                    return true;
+                  } else {
+
+                      await client.upsertUser({
+                        id: stream_id,
+                        name: first_name!,
+                        image: image_url,
+                      });
+                }
             } catch (error) {
-                console.log("Error while creating user in db",error);
+                console.log("Error while creating user in neon db",error);
             }
         }
 
