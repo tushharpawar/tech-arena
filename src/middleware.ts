@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 const isPulicRoute = createRouteMatcher([
     "/sign-up",
     "/sign-in",
+    "/api/webhook/register",
     "/"
 ])
 
