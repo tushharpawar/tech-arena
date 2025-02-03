@@ -7,7 +7,7 @@ import {
   ClientSideSuspense,
 } from "@liveblocks/react/suspense";
 import { Language, LanguageSelector} from "./LanguageSelector";
-import {  useState } from "react";
+import { useState } from "react";
 import OutputTerminal from "../Terminal/OutputTerminal";
 
 export default function LiveBlockEditor() {
@@ -25,11 +25,11 @@ export default function LiveBlockEditor() {
 
 
   return (
-    <div className="w-screen h-screen overflow-hidden">
+    <div className=" h-screen overflow-hidden">
         <div className="p-3 flex gap-2">
         <LanguageSelector language={language?.name || "typescript v(5.1.6)"} onSelect={onSelect}/>
         </div>
-      <div className="p-3 h-[60%] my-2">
+      <div className="p-3 h-[60%] my-1">
         <LiveblocksProvider
           publicApiKey={
             "pk_dev_VHduZugfYhmzP1wEMuG6zDgK7T4uZD3zZAdlt24h011ke7tUcemhc3cEpcq8uJS_"
