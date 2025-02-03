@@ -11,7 +11,7 @@ const OutputTerminal = ({code,language,version}:OutputTerminalProps) => {
     const [data,setData] = useState<{ output?: string, code?: number } | null>(null)
 
     const runCode =async()=> {
-        // if(!code || !language) return
+        if(!code || !language) return
 
         try {
             const response = await axios.post('https://emkc.org/api/v2/piston/execute',{
@@ -21,9 +21,6 @@ const OutputTerminal = ({code,language,version}:OutputTerminalProps) => {
                     "content":code
                 }]
             })
-            // const response2 = await axios.get('https://emkc.org/api/v2/piston/runtimes')
-            console.log("response",response.data);
-            // console.log("response2",response2);
             setData(response.data?.run)
         } catch (error) {
             console.log(error);
