@@ -32,7 +32,7 @@ export function CollaborativeEditor({language,codeSnippet,onChange}:Collaborativ
       return
     }
     setValue(codeSnippet);
-    onChange(codeSnippet)
+    onChange(value ? value:codeSnippet)
   }, [codeSnippet]);
 
   useEffect(() => {
