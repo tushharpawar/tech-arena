@@ -33,7 +33,7 @@ export function CollaborativeEditor({language,codeSnippet,onChange}:Collaborativ
     }
     setValue(codeSnippet);
     onChange(value ? value:codeSnippet)
-  }, [codeSnippet]);
+  }, [codeSnippet,language]);
 
   useEffect(() => {
     let yProvider: LiveblocksYjsProvider;
