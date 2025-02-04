@@ -26,12 +26,13 @@ export default function Page(){
         fetchToken()
       },[id])
   return (
-    <div className='flex h-screen w-screen'>
-      <div className="w-[50%]">
+    <div className='flex flex-col sm:flex-row h-screen w-screen'>
+      <div className="sm:w-[50%]">
+      <div className="text-sm text-center sm:hidden">Scroll down for code editor</div>
       <VideoCallMeeting callId={callId} token={token || ''}/>
       </div>
-      <div className="w-[50%]">
-      <LiveBlockEditor/>
+      <div className="sm:w-[50%]">
+      <LiveBlockEditor roomId={callId}/>
       </div>
     </div>
   )
