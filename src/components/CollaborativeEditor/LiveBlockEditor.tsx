@@ -55,7 +55,7 @@ export default function LiveBlockEditor({roomId}:{roomId:string}) {
   return (
     <div className=" h-screen overflow-hidden">
         <div className="p-3 flex gap-2">
-        <LanguageSelector language={language?.name || "Select a Langugae"} onSelect={onSelect}/>
+        <LanguageSelector language={language?.name || "Select a Language"} onSelect={onSelect}/>
 
         {/* Share link */}
         <Dialog>
