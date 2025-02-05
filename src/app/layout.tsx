@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
 import { ClerkProvider } from "@clerk/nextjs";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 
 const geistSans = localFont({
@@ -34,6 +35,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster />
+        <SpeedInsights/>
       </body>
     </html>
     </ClerkProvider>
