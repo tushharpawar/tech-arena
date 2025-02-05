@@ -21,9 +21,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useClerk } from '@clerk/nextjs';
 import { useToast } from "@/hooks/use-toast";
+import {
+  StreamVideoClient,
+  User,
+} from '@stream-io/video-react-sdk';
+import axios from "axios";
+
+  
+const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
 
 export default function Home() {
   const callId = cuid();
@@ -31,14 +39,50 @@ export default function Home() {
   const {toast} = useToast()
   const { signOut } = useClerk();
   const [value, setValue] = useState<string>("")
-  const { isSignedIn } = useSession();
+  const { isSignedIn,session } = useSession();
+  const [token,setToken] = useState<string | undefined>('')
+
+  const email = session?.user.primaryEmailAddress
+      const profilePicture = session?.user.imageUrl
+      const name = session?.user.firstName
+  
+      const id = email?.emailAddress.split('@')[0]
+  
+      const user: User = {
+          id:id!,
+          name:name!,
+          image:profilePicture,
+        };
+  
+        const fetchToken =async () =>{
+          const response = await axios.post(`/api/token`,{id})
+          setToken(response.data.token)
+        }
+        
+        const client = new StreamVideoClient({ apiKey, user, token });
+
+        const handleJoin =async () =>{
+          const call =await client.queryCalls({
+            filter_conditions:{
+              id:value,
+            }
+          })
+          if(call.calls.length > 0){
+            router.push(`/meeting/${value}`);
+          }else{
+            toast({
+              title:"Call not found!",
+              description:"Please enter valid call id.",
+              variant:"destructive"
+            })
+          }  
+        }
+      useEffect(()=>{
+        fetchToken()
+      },[id])
 
   const createMeeting = () => {
     router.push(`/meeting/${callId}`);
-  };
-
-  const handleJoin = () => {
-    router.push(`/meeting/${value}`);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
@@ -51,8 +95,7 @@ export default function Home() {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(callId);
     toast({
-      title: 'URL Copied!',
-      description: 'Room Id copied.',
+      title: 'Room Id copied!',
     });
   };
 
